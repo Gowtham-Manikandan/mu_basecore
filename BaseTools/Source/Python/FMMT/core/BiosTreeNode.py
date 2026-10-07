@@ -4,6 +4,20 @@
 # Copyright (c) 2021-, Intel Corporation. All rights reserved.<BR>
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 ##
+
+from pathlib import Path
+import importlib.util
+import FirmwareStorageFormat
+
+spec = importlib.util.find_spec("FirmwareStorageFormat")
+print(f"FirmwareStorageFormat spec: {spec}")
+ 
+if spec:
+    print(f"Loaded from: {spec.origin}")
+
+print(FirmwareStorageFormat.__file__)
+print(Path(FirmwareStorageFormat.__file__).parent)
+
 from FirmwareStorageFormat.UPLHeader import *
 from FirmwareStorageFormat.FvHeader import *
 from FirmwareStorageFormat.FfsFileHeader import *
