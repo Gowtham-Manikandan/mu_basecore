@@ -10,36 +10,40 @@ import importlib.util
 import os
 import sys
 
-print("=" * 70, flush=True)
-print("[FMMT-DEBUG] cwd           :", os.getcwd(), flush=True)
-print("[FMMT-DEBUG] this file     :", __file__, flush=True)
-print("[FMMT-DEBUG] python exe    :", sys.executable, flush=True)
-print("[FMMT-DEBUG] PYTHONPATH env:", os.environ.get("PYTHONPATH", "<unset>"), flush=True)
-print("[FMMT-DEBUG] sys.path (search order for 'FirmwareStorageFormat'):", flush=True)
+
+# stdout is redirected to fmmtreport.txt by the caller, so diagnostics go to stderr.
+def _dbg(*args):
+    print("[FMMT-DEBUG]", *args, file=sys.stderr, flush=True)
+
+
+_dbg("=" * 60)
+_dbg("cwd           :", os.getcwd())
+_dbg("this file     :", __file__)
+_dbg("python exe    :", sys.executable)
+_dbg("PYTHONPATH env:", os.environ.get("PYTHONPATH", "<unset>"))
+_dbg("sys.path (search order for 'FirmwareStorageFormat'):")
 for _i, _p in enumerate(sys.path):
-    print(f"[FMMT-DEBUG]   [{_i}] {_p}  exists={os.path.isdir(_p)}", flush=True)
+    _dbg(f"  [{_i}] {_p}  isdir={os.path.isdir(_p)}")
 
 _pkg_spec = importlib.util.find_spec("FirmwareStorageFormat")
-print("[FMMT-DEBUG] package spec  :", _pkg_spec, flush=True)
 if _pkg_spec is None:
-    print("[FMMT-DEBUG] *** FirmwareStorageFormat NOT FOUND on any sys.path entry above ***", flush=True)
+    _dbg("*** FirmwareStorageFormat NOT FOUND on any sys.path entry above ***")
 else:
+    _dbg("package __init__ :", _pkg_spec.origin)
     # __path__ (not sys.path) is what Python searches for submodules such as PECOFFHeader.
     for _pkg_dir in (_pkg_spec.submodule_search_locations or []):
-        print("[FMMT-DEBUG] package dir   :", _pkg_dir, flush=True)
+        _dbg("package dir   :", _pkg_dir)
         try:
-            print("[FMMT-DEBUG]   contents    :", sorted(os.listdir(_pkg_dir)), flush=True)
+            _dbg("  contents    :", sorted(os.listdir(_pkg_dir)))
         except OSError as _e:
-            print("[FMMT-DEBUG]   listdir failed:", _e, flush=True)
+            _dbg("  listdir failed:", _e)
 
     _mod_spec = importlib.util.find_spec("FirmwareStorageFormat.PECOFFHeader")
     if _mod_spec is None:
-        print("[FMMT-DEBUG] *** PECOFFHeader NOT FOUND in the package dir(s) above ***", flush=True)
-        print("[FMMT-DEBUG]     note: the file is named PECOFFHeader.py (all caps PECOFF);", flush=True)
-        print("[FMMT-DEBUG]     Linux is case-sensitive, Windows is not.", flush=True)
+        _dbg("*** PECOFFHeader NOT FOUND in the package dir(s) above ***")
     else:
-        print("[FMMT-DEBUG] PECOFFHeader  :", _mod_spec.origin, flush=True)
-print("=" * 70, flush=True)
+        _dbg("PECOFFHeader  :", _mod_spec.origin)
+_dbg("=" * 60)
 from FirmwareStorageFormat.FvHeader import *
 from FirmwareStorageFormat.FfsFileHeader import *
 from FirmwareStorageFormat.SectionHeader import *
