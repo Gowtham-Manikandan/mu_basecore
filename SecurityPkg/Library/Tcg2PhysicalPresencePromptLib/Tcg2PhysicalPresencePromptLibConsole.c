@@ -25,7 +25,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 EFI_STATUS
 EFIAPI
-Tcg2IsPromptReady (
+IsPromptReady (
   VOID
   )
 {
@@ -82,10 +82,6 @@ ReadUserKey (
   confirmed the requested action.
 
   @param[in]  PromptString  The string that should occupy the body of the prompt.
-  @param[in]  CautionKey    If TRUE, the caller has instructed the user to press
-                            the CAUTION key to confirm.
-                            If FALSE, the caller has instructed the user to press
-                            the ACCEPT key to confirm.
 
   @retval     TRUE    User confirmed the action.
   @retval     FALSE   User rejected the action or a failure occurred.
@@ -93,9 +89,8 @@ ReadUserKey (
 **/
 BOOLEAN
 EFIAPI
-Tcg2PromptForUserConfirmation (
-  IN  CHAR16   *PromptString,
-  IN  BOOLEAN  CautionKey
+PromptForUserConfirmation (
+  IN  CHAR16  *PromptString
   )
 {
   UINTN   Index;
@@ -107,7 +102,8 @@ Tcg2PromptForUserConfirmation (
     Print (DstStr);
   }
 
-  if (ReadUserKey (CautionKey)) {
+  // The legacy library signature carries no CautionKey, so the accept key (F10) is always used.
+  if (ReadUserKey (FALSE)) {
     return TRUE;
   }
 

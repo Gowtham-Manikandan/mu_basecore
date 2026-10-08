@@ -653,12 +653,12 @@ Tcg2UserConfirm (
   BufSize -= StrSize (ConfirmText);
   UnicodeSPrint (ConfirmText + StrLen (ConfirmText), BufSize, TmpStr1, TmpStr2);
 
-  Status = Tcg2IsPromptReady ();
+  Status = IsPromptReady ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Tcg2IsPromptReady failed w/ Status: %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "IsPromptReady failed w/ Status: %r\n", Status));
     Result = FALSE;
   } else {
-    Result = Tcg2PromptForUserConfirmation (ConfirmText, CautionKey);
+    Result = PromptForUserConfirmation (ConfirmText);
   }
 
 Cleanup:
